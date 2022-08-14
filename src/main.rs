@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use clap::Parser;
-use std::io::{self, Write};
+use log::{info, warn};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -15,12 +15,13 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-    let stdout = io::stdout(); // get the global stdout entity
-    let mut handle = io::BufWriter::new(stdout.lock()); // optional: wrap the handle in a wrapper
+    env_logger::init();
+    // use this to initialize a progress bar to the application
+    // let pb = indicatif::ProgressBar::new(100);
 
     let args = Cli::parse();
     let content = std::fs::read_to_string(&args.path)
         .with_context(|| format!("could not read file `{:?}`", &args.path))?;
-    writeln!(handle, "file content: {}", content);
+    info!("file content: {}", content);
     Ok(())
 }
