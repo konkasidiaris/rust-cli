@@ -14,9 +14,9 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-    let path = "test.txt";
-    let content =
-        std::fs::read_to_string(path).with_context(|| format!("could not read file `{}`", path))?;
+    let args = Cli::parse();
+    let content = std::fs::read_to_string(&args.path)
+        .with_context(|| format!("could not read file `{:?}`", &args.path))?;
     println!("file content: {}", content);
     Ok(())
 }
