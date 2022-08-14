@@ -2,7 +2,7 @@
 
 use anyhow::{Context, Result};
 use clap::Parser;
-use log::{info, warn};
+use std::io::{self, Write};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -22,6 +22,11 @@ fn main() -> Result<()> {
     let args = Cli::parse();
     let content = std::fs::read_to_string(&args.path)
         .with_context(|| format!("could not read file `{:?}`", &args.path))?;
-    info!("file content: {}", content);
+
+    grrs::find_matches(
+        &content,
+        &args.pattern,
+        &mut io::BufWriter::new(io::stdout().lock()),
+    );
     Ok(())
 }
